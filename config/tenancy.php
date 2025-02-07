@@ -6,6 +6,10 @@ use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Database\Models\Tenant;
 
 return [
+    'domain' => [
+    'enabled' => true,
+    'tenant_model' => Stancl\Tenancy\Database\Models\Tenant::class,
+],
     'tenant_model' => Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
 

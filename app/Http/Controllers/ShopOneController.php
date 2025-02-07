@@ -8,7 +8,7 @@ class ShopOneController extends Controller
 {
     public function index()
     {
-        $domain = Domain::where('domain', request()->getHost())->first(); // Get domain from request's host
+        $domain = Domain::where('domain', request()->getHost())->first();
         if ($domain){
                 $tenant = $domain->tenant;
                 $stores = Store::with(['categories.products'])->where('id', $tenant->id)->get();
