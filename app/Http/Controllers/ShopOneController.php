@@ -14,7 +14,7 @@ class ShopOneController extends Controller
                 $stores = Store::with(['categories.products'])->where('id', $tenant->id)->get();
                 return view('frontend.pages.index', compact('stores'));
             } else {
-                abort(404, 'Tenant not found for this domain.');
+                return redirect()->route('login');
             }
         }
 }
