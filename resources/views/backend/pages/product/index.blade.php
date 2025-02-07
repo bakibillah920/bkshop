@@ -42,8 +42,8 @@
                                     @forelse($categories as $key => $value)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $value->s_name }}</td>
-                                            <td>{{ $value->c_name }}</td>
+                                            <td>{{ $value->store->name }}</td>
+                                            <td>{{ $value->category->name }}</td>
                                             <td>{{ $value->name }}</td>
                                             <td>{{ $value->status }}</td>
                                             <td class="text-middle py-0 align-middle @if (!check('Product')->edit && !check('Product')->delete) d-none @endif">

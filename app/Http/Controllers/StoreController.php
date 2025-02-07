@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Store;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class StoreController extends Controller
 {
@@ -50,13 +51,18 @@ class StoreController extends Controller
         // return $request->all();
         $this->validate($request, [
             'name' => 'string|required',
+            'domain' => 'required|string|unique:domains,domain',
             'status' => 'required|in:active,inactive',
         ]);
         
         $data = $request->all();
 
-        $status = Store::create($data);
-        if ($status) {
+        $tenant = Store::create($data);
+        
+        $tenant->domains()->create([
+                 'domain' => $data['domain'], // Example: shop_one.localhost
+        ]);
+        if ($tenant) {
             request()->session()->flash('success', 'Store successfully added');
         } else {
             request()->session()->flash('error', 'Error occurred, Please try again!');
@@ -91,11 +97,21 @@ class StoreController extends Controller
         $store = Store::findOrFail($id);
         $this->validate($request, [
             'name' => 'string|required',
+            'domain' => [
+                    'required',
+                    'string',
+                    Rule::unique('domains', 'domain')->ignore($store->id, 'tenant_id'), // ? Ignore current domain
+                ],
             'status' => 'required|in:active,inactive',
         ]);
         $data = $request->all();
 
         $status = $store->fill($data)->save();
+        
+        $store->domains()->updateOrCreate(
+                ['tenant_id' => $store->id],  // Find by tenant_id
+                ['domain' => $data['domain']] // Update with new domain
+            );
         if ($status) {
             request()->session()->flash('success', 'Store successfully updated');
         } else {

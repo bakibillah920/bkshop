@@ -17,11 +17,8 @@ use App\Http\Controllers\ShopOneController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', function () {
-    return redirect()->route('shop_one.root_route');
-});
 
-Route::get('/shop_one', [ShopOneController::class, 'index'])->name('shop_one.root_route');
+Route::get('/', [ShopOneController::class, 'index'])->name('shop_one.root_route');
 
 
 Route::group(['middleware' => ['auth']], function () {

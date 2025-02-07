@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Category;
 use Illuminate\Support\Str;
-
+use Illuminate\Support\Facades\DB;
 class ProductController extends Controller
 {
     /**
@@ -26,9 +26,7 @@ class ProductController extends Controller
         if (!check('Product')->show) {
             return back();
         }
-        $product = Product::join('stores', 'stores.id', '=', 'products.store_id')
-                ->join('categories', 'categories.id', '=', 'products.category_id')
-                ->select('products.*', 'categories.name as c_name', 'stores.name as s_name')->get();
+        $product = Product::where('status','active')->get();
         return view('backend.pages.product.index')->with('categories', $product);
     }
     public function create()
@@ -36,7 +34,8 @@ class ProductController extends Controller
         if (!check('Product')->add) {
             return back();
         }
-        $storeList = Store::where('status','active')->pluck('name','id')->toArray();
+        $storeList = DB::table('tenants')->whereRaw("JSON_EXTRACT(data, '$.status') = 'active'")->get(['id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.name')) AS name")]);
+        $storeList = $storeList->pluck('name', 'id')->toArray();
         $categoryList = array();
         return view('backend.pages.product.create',compact('storeList','categoryList'));
     }
@@ -47,7 +46,7 @@ class ProductController extends Controller
         }
         // return $request->all();
         $this->validate($request, [
-             'store_id' => 'not_in:0',
+             'tenant_id' => 'not_in:0',
              'category_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
@@ -96,12 +95,12 @@ class ProductController extends Controller
         // return $request->all();
         $product = Product::findOrFail($id);
          $this->validate($request, [
-            'store_id' => 'not_in:0',
+            'tenant_id' => 'not_in:0',
             'category_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
         ], [], [
-            'store_id' => "Store",
+            'tenant_id' => "Store",
             'category_id' => "Category"
         ]);
         $data = $request->all();
@@ -138,7 +137,7 @@ class ProductController extends Controller
         if (!check('Product')->show) {
             return back();
         }
-        $categoryList =  Category::where('status','active')->where('store_id',$request->store_id)->pluck('name','id')->toArray();
+        $categoryList =  Category::where('status','active')->where('tenant_id',$request->tenant_id)->pluck('name','id')->toArray();
         $view = view('backend.pages.product.getcategory', compact('categoryList'))->render();
         return response()->json(['html' => $view]);
     }

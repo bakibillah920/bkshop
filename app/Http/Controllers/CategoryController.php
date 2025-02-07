@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Store;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -34,8 +35,10 @@ class CategoryController extends Controller
         if (!check('Category')->add) {
             return back();
         }
-        $storeList = Store::where('status','active')->pluck('name','id')->toArray();
-     
+
+        $storeList = DB::table('tenants')->whereRaw("JSON_EXTRACT(data, '$.status') = 'active'")->get(['id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.name')) AS name")]);
+        $storeList = $storeList->pluck('name', 'id')->toArray();
+
         return view('backend.pages.category.create',compact('storeList'));
     }
     public function store(Request $request)
@@ -45,11 +48,11 @@ class CategoryController extends Controller
         }
         // return $request->all();
         $this->validate($request, [
-            'store_id' => 'not_in:0',
+            'tenant_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
         ], [], [
-            'store_id' => "Store"
+            'tenant_id' => "Store"
         ]);
         $data = $request->all();
 
@@ -70,7 +73,8 @@ class CategoryController extends Controller
         if (!check('Category')->edit) {
             return back();
         }
-        $storeList = Store::where('status','active')->pluck('name','id')->toArray();
+        $storeList = DB::table('tenants')->whereRaw("JSON_EXTRACT(data, '$.status') = 'active'")->get(['id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.name')) AS name")]);
+        $storeList = $storeList->pluck('name', 'id')->toArray();
         $category = Category::findOrFail($id);
         return view('backend.pages.category.edit',compact('category','storeList'));
     }
@@ -90,11 +94,11 @@ class CategoryController extends Controller
         // return $request->all();
         $category = Category::findOrFail($id);
          $this->validate($request, [
-            'store_id' => 'not_in:0',
+            'tenant_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
         ], [], [
-            'store_id' => "Store"
+            'tenant_id' => "Store"
         ]);
         $data = $request->all();
 

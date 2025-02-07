@@ -37,7 +37,16 @@
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-
+                                    <?php $firstDomain = $store->domains->first()->domain ?? 'No domain found';?>
+                                    <div class="form-group">
+                                        <label for="inputTitle" class="col-form-label">Domain <span
+                                                class="text-danger">*</span></label>
+                                        <input id="inputTitle" type="text" name="domain" placeholder="shop_one.root_route"
+                                            value="{{ $firstDomain }}" class="form-control">
+                                        @error('domain')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
                                     <div class="form-group">
                                         <label for="status" class="col-form-label">Status <span
                                                 class="text-danger">*</span></label>
