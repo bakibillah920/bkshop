@@ -76,12 +76,13 @@ CREATE TABLE IF NOT EXISTS `domains` (
   UNIQUE KEY `domains_domain_unique` (`domain`),
   KEY `domains_tenant_id_foreign` (`tenant_id`),
   CONSTRAINT `domains_tenant_id_foreign` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- Dumping data for table bkshop.domains: ~1 rows (approximately)
+-- Dumping data for table bkshop.domains: ~2 rows (approximately)
 DELETE FROM `domains`;
 INSERT INTO `domains` (`id`, `domain`, `tenant_id`, `created_at`, `updated_at`) VALUES
-	(2, 'shop_one.localhost', '129fc82d-7456-4bb5-84d1-dc9d227c1820', '2025-02-07 14:11:36', '2025-02-07 14:11:36');
+	(2, 'shop_one.localhost', '129fc82d-7456-4bb5-84d1-dc9d227c1820', '2025-02-07 14:11:36', '2025-02-07 14:11:36'),
+	(3, 'shop_three.localhost', 'd18f90d8-7299-485d-94e6-e729d08efdc6', '2025-02-07 17:06:08', '2025-02-07 17:06:08');
 
 -- Dumping structure for table bkshop.failed_jobs
 CREATE TABLE IF NOT EXISTS `failed_jobs` (
@@ -277,10 +278,11 @@ CREATE TABLE IF NOT EXISTS `tenants` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- Dumping data for table bkshop.tenants: ~1 rows (approximately)
+-- Dumping data for table bkshop.tenants: ~2 rows (approximately)
 DELETE FROM `tenants`;
 INSERT INTO `tenants` (`id`, `created_at`, `updated_at`, `data`) VALUES
-	('129fc82d-7456-4bb5-84d1-dc9d227c1820', '2025-02-07 14:11:36', '2025-02-07 14:45:36', '{"name":"Shop One","status":"active"}');
+	('129fc82d-7456-4bb5-84d1-dc9d227c1820', '2025-02-07 14:11:36', '2025-02-07 14:45:36', '{"name":"Shop One","status":"active"}'),
+	('d18f90d8-7299-485d-94e6-e729d08efdc6', '2025-02-07 17:06:08', '2025-02-07 17:06:08', '{"name":"shop Three","status":"active"}');
 
 -- Dumping structure for table bkshop.users
 CREATE TABLE IF NOT EXISTS `users` (
