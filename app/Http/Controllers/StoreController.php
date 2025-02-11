@@ -63,7 +63,7 @@ class StoreController extends Controller
         $data = $request->all();
         
         $tenant = Tenant::where('domain', request()->getHost())->first();
-        if(empty($tenant)) {
+        if(is_null($tenant)) {
             $tenant = Tenant::create([
                 'id' => strtolower(str_replace(' ', '_', $data['name'])),
             ]);

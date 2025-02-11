@@ -37,7 +37,7 @@
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                     @if(!$tenant)
+                                     @if(is_null($tenant))
                                     <?php $firstDomain = $store->tenant->id ?? 'No domain found';?>
                                     <div class="form-group">
                                         <label for="inputTitle" class="col-form-label">Domain <span

@@ -35,7 +35,7 @@
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    @if(!$tenant)
+                                     @if(is_null($tenant))
                                     <div class="form-group">
                                         <label for="inputTitle" class="col-form-label">Domain <span
                                                 class="text-danger">*</span></label>
