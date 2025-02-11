@@ -7,12 +7,14 @@ use Stancl\Tenancy\Database\Models\Tenant;
 
 return [
     'domain' => [
-    'enabled' => true,
-    'tenant_model' => Stancl\Tenancy\Database\Models\Tenant::class,
-],
-    'tenant_model' => Tenant::class,
+        'enabled' => true,
+        'tenant_model' => Stancl\Tenancy\Database\Models\Tenant::class,
+    ],
+    'tenant_model' => App\Models\Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
-
+    'tenant_database_connection' => 'tenant',
+    'create_database' => true, 
+    'delete_database' => true, 
     'domain_model' => Domain::class,
 
     /**
@@ -43,8 +45,7 @@ return [
      * Database tenancy config. Used by DatabaseTenancyBootstrapper.
      */
     'database' => [
-        'central_connection' => env('DB_CONNECTION', 'central'),
-
+        'central_connection' => env('DB_CONNECTION', 'mysql'),
         /**
          * Connection used as a "template" for the dynamically created tenant database connection.
          * Note: don't name your template connection tenant. That name is reserved by package.

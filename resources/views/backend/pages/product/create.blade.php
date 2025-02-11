@@ -29,13 +29,13 @@
                                     <div class="form-group">
                                        <label for="inputStore" class="col-form-label">Store <span
                                                 class="text-danger">*</span></label>
-                                                <select class="form-control" name="tenant_id" id="store_id">
+                                                <select class="form-control" name="store_id" id="store_id">
                                            <option value="0" >--Select Store--</option>
                                             @foreach ($storeList as $storeId=>$storename)
                                             <option value="{{ $storeId }}" >{{$storename}}</option>
                                             @endforeach
                                         </select>
-                                        @error('tenant_id')
+                                        @error('store_id')
                                             <span class="text-danger">{{ $message }}</span>
                                         @enderror
                                     </div>
@@ -97,7 +97,7 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 data: {
-                    tenant_id: storeid,
+                    store_id: storeid,
                 },
                 success: function (response) {
                     $('#category_id').html(response.html);

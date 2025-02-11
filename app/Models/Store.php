@@ -1,25 +1,29 @@
 <?php
-
 namespace App\Models;
-use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Store extends BaseTenant
+use Illuminate\Database\Eloquent\Model;
+use DB;
+class Store extends Model
 {
-    protected $fillable = ['id', 'name','status'];
 
-    public function domains(): HasMany
+    protected $connection = 'tenant'; // Use the tenant database
+
+    protected $fillable = ['tenant_id', 'name', 'status'];
+
+    public function tenant()
     {
-        return $this->hasMany(\Stancl\Tenancy\Database\Models\Domain::class, 'tenant_id'); 
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
+
     public function categories()
     {
-        return $this->hasMany(Category::class, 'tenant_id');
+        return $this->hasMany(Category::class, 'store_id');
     }
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'tenant_id');
+        return $this->hasMany(Product::class, 'store_id');
     }
+   
 }
 

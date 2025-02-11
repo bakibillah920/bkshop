@@ -18,18 +18,15 @@
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
-  `tenant_id` varchar(255) NOT NULL DEFAULT '0',
+  `store_id` varchar(255) NOT NULL DEFAULT '0',
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- Dumping data for table bkshop.categories: ~2 rows (approximately)
+-- Dumping data for table bkshop.categories: ~0 rows (approximately)
 DELETE FROM `categories`;
-INSERT INTO `categories` (`id`, `name`, `tenant_id`, `status`, `created_at`, `updated_at`) VALUES
-	(1, 'C one', '129fc82d-7456-4bb5-84d1-dc9d227c1820', 'active', '2025-02-07 14:49:14', '2025-02-07 14:49:14'),
-	(2, 'C Two', '129fc82d-7456-4bb5-84d1-dc9d227c1820', 'active', '2025-02-07 14:49:35', '2025-02-07 14:49:35');
 
 -- Dumping structure for table bkshop.company_contacts
 CREATE TABLE IF NOT EXISTS `company_contacts` (
@@ -64,25 +61,6 @@ CREATE TABLE IF NOT EXISTS `company_infos` (
 DELETE FROM `company_infos`;
 INSERT INTO `company_infos` (`id`, `name`, `title`, `logo`, `address`, `created_at`, `updated_at`) VALUES
 	(1, 'Bkshop', 'Bkshop', 'images/seeder/logo.png', 'Tangail,Dhaka', NULL, NULL);
-
--- Dumping structure for table bkshop.domains
-CREATE TABLE IF NOT EXISTS `domains` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `domain` varchar(255) NOT NULL,
-  `tenant_id` varchar(255) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `domains_domain_unique` (`domain`),
-  KEY `domains_tenant_id_foreign` (`tenant_id`),
-  CONSTRAINT `domains_tenant_id_foreign` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
--- Dumping data for table bkshop.domains: ~2 rows (approximately)
-DELETE FROM `domains`;
-INSERT INTO `domains` (`id`, `domain`, `tenant_id`, `created_at`, `updated_at`) VALUES
-	(2, 'shop_one.localhost', '129fc82d-7456-4bb5-84d1-dc9d227c1820', '2025-02-07 14:11:36', '2025-02-07 14:11:36'),
-	(3, 'shop_three.localhost', 'd18f90d8-7299-485d-94e6-e729d08efdc6', '2025-02-07 17:06:08', '2025-02-07 17:06:08');
 
 -- Dumping structure for table bkshop.failed_jobs
 CREATE TABLE IF NOT EXISTS `failed_jobs` (
@@ -125,14 +103,13 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=47 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 -- Dumping data for table bkshop.migrations: ~46 rows (approximately)
 DELETE FROM `migrations`;
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(1, '2014_10_12_100000_create_password_resets_table', 1),
 	(2, '2019_08_19_000000_create_failed_jobs_table', 1),
-	(3, '2019_12_14_000001_create_personal_access_tokens_table', 1),
 	(4, '2020_07_10_021010_create_brands_table', 1),
 	(5, '2020_07_10_062541_create_product_sizes_table', 1),
 	(6, '2020_07_10_091722_create_image_galleries_table', 1),
@@ -174,8 +151,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 	(42, '2025_01_15_222421_create_confirmed_orders_table', 1),
 	(43, '2025_01_16_142848_add_invoice_id_to_orders_table', 1),
 	(44, '2025_01_16_222029_create_excels_table', 1),
-	(45, '2019_09_15_000010_create_tenants_table', 2),
-	(46, '2019_09_15_000020_create_domains_table', 2);
+	(46, '2019_09_15_000020_create_domains_table', 2),
+	(47, '2019_09_15_000010_create_tenants_table', 3),
+	(48, '2019_12_14_000001_create_personal_access_tokens_table', 3);
 
 -- Dumping structure for table bkshop.password_resets
 CREATE TABLE IF NOT EXISTS `password_resets` (
@@ -237,22 +215,17 @@ DELETE FROM `personal_access_tokens`;
 -- Dumping structure for table bkshop.products
 CREATE TABLE IF NOT EXISTS `products` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `tenant_id` varchar(255) NOT NULL DEFAULT '0',
+  `store_id` varchar(255) NOT NULL DEFAULT '0',
   `category_id` bigint(20) NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL,
   `status` enum('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- Dumping data for table bkshop.products: ~4 rows (approximately)
+-- Dumping data for table bkshop.products: ~0 rows (approximately)
 DELETE FROM `products`;
-INSERT INTO `products` (`id`, `tenant_id`, `category_id`, `name`, `status`, `created_at`, `updated_at`) VALUES
-	(1, '129fc82d-7456-4bb5-84d1-dc9d227c1820', 1, 'Product One', 'active', '2025-02-07 14:58:44', '2025-02-07 14:58:44'),
-	(2, '129fc82d-7456-4bb5-84d1-dc9d227c1820', 1, 'Product Two', 'active', '2025-02-07 14:59:07', '2025-02-07 14:59:07'),
-	(3, '129fc82d-7456-4bb5-84d1-dc9d227c1820', 2, 'Product One', 'active', '2025-02-07 15:00:14', '2025-02-07 15:00:14'),
-	(4, '129fc82d-7456-4bb5-84d1-dc9d227c1820', 2, 'Product Two', 'active', '2025-02-07 15:00:29', '2025-02-07 15:00:29');
 
 -- Dumping structure for table bkshop.roles
 CREATE TABLE IF NOT EXISTS `roles` (
@@ -269,25 +242,39 @@ INSERT INTO `roles` (`id`, `name`, `created_at`, `updated_at`) VALUES
 	(1, 'Admin', NULL, NULL),
 	(2, 'Merchant', NULL, NULL);
 
+-- Dumping structure for table bkshop.stores
+CREATE TABLE IF NOT EXISTS `stores` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `tenant_id` varchar(255) NOT NULL DEFAULT '0',
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Dumping data for table bkshop.stores: ~0 rows (approximately)
+DELETE FROM `stores`;
+
 -- Dumping structure for table bkshop.tenants
 CREATE TABLE IF NOT EXISTS `tenants` (
   `id` varchar(255) NOT NULL,
+  `domain` varchar(255) DEFAULT NULL,
+  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`data`)),
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `data` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`data`)),
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tenants_domain_unique` (`domain`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- Dumping data for table bkshop.tenants: ~2 rows (approximately)
+-- Dumping data for table bkshop.tenants: ~0 rows (approximately)
 DELETE FROM `tenants`;
-INSERT INTO `tenants` (`id`, `created_at`, `updated_at`, `data`) VALUES
-	('129fc82d-7456-4bb5-84d1-dc9d227c1820', '2025-02-07 14:11:36', '2025-02-07 14:45:36', '{"name":"Shop One","status":"active"}'),
-	('d18f90d8-7299-485d-94e6-e729d08efdc6', '2025-02-07 17:06:08', '2025-02-07 17:06:08', '{"name":"shop Three","status":"active"}');
 
 -- Dumping structure for table bkshop.users
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
+  `tenant_id` varchar(255) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
   `shopname` varchar(255) DEFAULT NULL,
   `user_info_id` bigint(20) unsigned DEFAULT NULL,
@@ -305,9 +292,9 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 -- Dumping data for table bkshop.users: ~2 rows (approximately)
 DELETE FROM `users`;
-INSERT INTO `users` (`id`, `name`, `email`, `shopname`, `user_info_id`, `role_id`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-	(1, 'MD Bakibillah', 'bakibillah920@gmail.com', NULL, NULL, 1, NULL, '$2y$10$iFN6Vtq4xow/MMJrrqrO0OuQY107BS.ejmdSgwN0pAaKUN2HCTkcG', NULL, NULL, NULL),
-	(3, 'bakibillah', 'bakibillah@gmail.com', 'Dhakashop', NULL, 2, NULL, '$2y$10$iFN6Vtq4xow/MMJrrqrO0OuQY107BS.ejmdSgwN0pAaKUN2HCTkcG', NULL, '2025-02-05 13:13:19', '2025-02-05 13:13:19');
+INSERT INTO `users` (`id`, `name`, `tenant_id`, `email`, `shopname`, `user_info_id`, `role_id`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
+	(1, 'MD Bakibillah', '', 'bakibillah920@gmail.com', NULL, NULL, 1, NULL, '$2y$10$iFN6Vtq4xow/MMJrrqrO0OuQY107BS.ejmdSgwN0pAaKUN2HCTkcG', NULL, NULL, NULL),
+	(3, 'bakibillah', '', 'bakibillah@gmail.com', 'Dhakashop', NULL, 2, NULL, '$2y$10$iFN6Vtq4xow/MMJrrqrO0OuQY107BS.ejmdSgwN0pAaKUN2HCTkcG', NULL, '2025-02-05 13:13:19', '2025-02-05 13:13:19');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

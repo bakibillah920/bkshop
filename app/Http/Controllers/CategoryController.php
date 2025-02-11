@@ -35,9 +35,7 @@ class CategoryController extends Controller
         if (!check('Category')->add) {
             return back();
         }
-
-        $storeList = DB::table('tenants')->whereRaw("JSON_EXTRACT(data, '$.status') = 'active'")->get(['id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.name')) AS name")]);
-        $storeList = $storeList->pluck('name', 'id')->toArray();
+        $storeList = Store::pluck('name', 'id')->toArray();
 
         return view('backend.pages.category.create',compact('storeList'));
     }
@@ -48,7 +46,7 @@ class CategoryController extends Controller
         }
         // return $request->all();
         $this->validate($request, [
-            'tenant_id' => 'not_in:0',
+            'store_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
         ], [], [
@@ -73,8 +71,7 @@ class CategoryController extends Controller
         if (!check('Category')->edit) {
             return back();
         }
-        $storeList = DB::table('tenants')->whereRaw("JSON_EXTRACT(data, '$.status') = 'active'")->get(['id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.name')) AS name")]);
-        $storeList = $storeList->pluck('name', 'id')->toArray();
+        $storeList = Store::where('status','active')->pluck('name', 'id')->toArray();
         $category = Category::findOrFail($id);
         return view('backend.pages.category.edit',compact('category','storeList'));
     }
@@ -94,7 +91,7 @@ class CategoryController extends Controller
         // return $request->all();
         $category = Category::findOrFail($id);
          $this->validate($request, [
-            'tenant_id' => 'not_in:0',
+            'store_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
         ], [], [

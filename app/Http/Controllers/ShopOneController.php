@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 use App\Models\Store;
 use Illuminate\Http\Request;
-use Stancl\Tenancy\Database\Models\Domain;
+use App\Models\Tenant;
 class ShopOneController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $domain = Domain::where('domain', request()->getHost())->first();
-        if ($domain){
-                $tenant = $domain->tenant;
-                $stores = Store::with(['categories.products'])->where('id', $tenant->id)->get();
+         $host = $request->getHost();
+        $tenant = Tenant::where('domain', $host)->first();
+        if ($tenant){
+                $stores = Store::with(['categories.products'])->where('tenant_id', $tenant->id)->get();
                 return view('frontend.pages.index', compact('stores'));
             } else {
                 return redirect()->route('login');

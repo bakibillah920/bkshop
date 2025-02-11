@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Store;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-
+use App\Models\Tenant;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Artisan;
+use DB;
 class StoreController extends Controller
 {
     /**
@@ -25,8 +28,8 @@ class StoreController extends Controller
         if (!check('Store')->show) {
             return back();
         }
-        
         $stores = Store::get();
+
         return view('backend.pages.store.index',compact('stores'));
     }
 
@@ -40,7 +43,10 @@ class StoreController extends Controller
         if (!check('Store')->add) {
             return back();
         }
-        return view('backend.pages.store.create');
+        
+         $tenant = Tenant::where('id', request()->getHost())->first();
+
+        return view('backend.pages.store.create',compact('tenant'));
     }
 
     public function store(Request $request)
@@ -48,28 +54,47 @@ class StoreController extends Controller
         if (!check('Store')->add) {
             return back();
         }
-        // return $request->all();
+        
         $this->validate($request, [
             'name' => 'string|required',
-            'domain' => 'required|string|unique:domains,domain',
             'status' => 'required|in:active,inactive',
         ]);
         
         $data = $request->all();
-
-        $tenant = Store::create($data);
         
-        $tenant->domains()->create([
-                 'domain' => $data['domain'], // Example: shop_one.localhost
-        ]);
-        if ($tenant) {
+        $tenant = Tenant::where('domain', request()->getHost())->first();
+        if(empty($tenant)) {
+            $tenant = Tenant::create([
+                'id' => strtolower(str_replace(' ', '_', $data['name'])),
+            ]);
+            Tenant::where('id',  $tenant->id)->update(['domain' => $data['domain']]);
+            $data['tenant_id'] =  $tenant->id; 
+            $store = Store::create($data);
+            DB::statement("CREATE DATABASE `$tenant->id`");
+
+            // Set new database connection dynamically
+            Config::set('database.connections.tenant.database', $tenant->id);
+            DB::purge('tenant');
+            DB::reconnect('tenant');
+            $sqlFilePath = storage_path('app/bkshop.sql'); // Ensure this file exists
+            if (file_exists($sqlFilePath)) {
+                DB::connection('tenant')->unprepared(file_get_contents($sqlFilePath));
+            }
+            
+            $data['tenant_id'] =  $tenant->id; 
+            $store = Store::create($data);
+        }else{
+            $data['tenant_id'] =  $tenant->id; 
+            $store = Store::create($data);
+        }
+
+         
+        if ($store) {
             request()->session()->flash('success', 'Store successfully added');
         } else {
             request()->session()->flash('error', 'Error occurred, Please try again!');
         }
         return redirect()->route('merchant.store.index');
-
-
     }
 
     public function edit($id)
@@ -78,7 +103,8 @@ class StoreController extends Controller
             return back();
         }
         $store = Store::findOrFail($id);
-        return view('backend.pages.store.edit',compact('store'));
+        $tenant = Tenant::where('domain', request()->getHost())->first();
+        return view('backend.pages.store.edit',compact('store','tenant'));
     }
 
     /**
@@ -95,23 +121,14 @@ class StoreController extends Controller
         }
         // return $request->all();
         $store = Store::findOrFail($id);
+
         $this->validate($request, [
             'name' => 'string|required',
-            'domain' => [
-                    'required',
-                    'string',
-                    Rule::unique('domains', 'domain')->ignore($store->id, 'tenant_id'), // ? Ignore current domain
-                ],
             'status' => 'required|in:active,inactive',
         ]);
         $data = $request->all();
 
         $status = $store->fill($data)->save();
-        
-        $store->domains()->updateOrCreate(
-                ['tenant_id' => $store->id],  // Find by tenant_id
-                ['domain' => $data['domain']] // Update with new domain
-            );
         if ($status) {
             request()->session()->flash('success', 'Store successfully updated');
         } else {

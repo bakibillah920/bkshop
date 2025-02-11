@@ -34,8 +34,7 @@ class ProductController extends Controller
         if (!check('Product')->add) {
             return back();
         }
-        $storeList = DB::table('tenants')->whereRaw("JSON_EXTRACT(data, '$.status') = 'active'")->get(['id', DB::raw("JSON_UNQUOTE(JSON_EXTRACT(data, '$.name')) AS name")]);
-        $storeList = $storeList->pluck('name', 'id')->toArray();
+        $storeList = Store::where('status','active')->pluck('name', 'id')->toArray();
         $categoryList = array();
         return view('backend.pages.product.create',compact('storeList','categoryList'));
     }
@@ -46,7 +45,7 @@ class ProductController extends Controller
         }
         // return $request->all();
         $this->validate($request, [
-             'tenant_id' => 'not_in:0',
+             'store_id' => 'not_in:0',
              'category_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
@@ -95,7 +94,7 @@ class ProductController extends Controller
         // return $request->all();
         $product = Product::findOrFail($id);
          $this->validate($request, [
-            'tenant_id' => 'not_in:0',
+            'store_id' => 'not_in:0',
             'category_id' => 'not_in:0',
             'name' => 'string|required',
             'status' => 'required|in:active,inactive',
@@ -137,7 +136,7 @@ class ProductController extends Controller
         if (!check('Product')->show) {
             return back();
         }
-        $categoryList =  Category::where('status','active')->where('tenant_id',$request->tenant_id)->pluck('name','id')->toArray();
+        $categoryList =  Category::where('status','active')->where('store_id',$request->store_id)->pluck('name','id')->toArray();
         $view = view('backend.pages.product.getcategory', compact('categoryList'))->render();
         return response()->json(['html' => $view]);
     }

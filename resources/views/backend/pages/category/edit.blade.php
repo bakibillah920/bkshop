@@ -31,10 +31,10 @@
                                     <div class="form-group">
                                        <label for="inputStore" class="col-form-label">Store <span
                                                 class="text-danger">*</span></label>
-                                       <select class="form-control" name="tenant_id">
+                                       <select class="form-control" name="store_id">
                                            <option value="0" >--Select Store--</option>
                                             @foreach ($storeList as $storeId=>$storename)
-                                            <option value="{{ $storeId }}"  @if ($category->tenant_id == $storeId) selected @endif>{{$storename}}</option>
+                                            <option value="{{ $storeId }}"  @if ($category->store_id == $storeId) selected @endif>{{$storename}}</option>
                                             @endforeach
                                         </select>
                                         @error('tenant_id')

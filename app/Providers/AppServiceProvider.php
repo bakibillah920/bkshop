@@ -9,7 +9,10 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Artisan;
+use App\Models\Tenant;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -29,38 +32,47 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Paginator::useBootstrap();
-        if (Schema::hasTable('company_infos')) {
-            $site_info = CompanyInfo::first();
-            $site_contact_info = CompanyContact::first();
-            $cart_products = '';
-            // if(serviceCheck('Database Add To Cart')){
-            //     $user_ip = request()->ip();
-            //     $cart_products = AddToCart::where('ip_address',$user_ip)->orderBy('id','desc')->get();
-            //     if(Auth::user()){
-            //         $cart_products = AddToCart::where('user_id',Auth::user()->id)->orderBy('id','desc')->get();
-            //     }
-            // }
+    
+        $tenant = Tenant::where('domain', request()->getHost())->first();
+       
+        if (!empty($tenant)) {
+            Config::set('database.connections.tenant.database', $tenant->id);
+            DB::purge('tenant');
+            DB::reconnect('tenant');
+            Paginator::useBootstrap();
+            if (Schema::hasTable('company_infos')) {
+                $site_info = CompanyInfo::first();
+                $site_contact_info = CompanyContact::first();
+                $cart_products = '';
 
-            view()->share('cart_products', $cart_products);
-            view()->share('site_info', $site_info);
-            view()->share('site_contact_info', $site_contact_info);
-
-//            $n['pages'] = Page::all();
-            // $n['google_tag'] = GoogleTag::first();
-            // $n['pixel_tag'] = PixelTag::first();
-//            view()->share($n);
+                view()->share('cart_products', $cart_products);
+                view()->share('site_info', $site_info);
+                view()->share('site_contact_info', $site_contact_info);
+            }
+        }else{
+       Config::set('database.connections.tenant.database', env("DB_DATABASE"));
+            DB::purge('tenant');
+            DB::reconnect('tenant');
+            Paginator::useBootstrap();
+            if (Schema::hasTable('company_infos')) {
+                $site_info = CompanyInfo::first();
+                $site_contact_info = CompanyContact::first();
+                $cart_products = '';
+                view()->share('cart_products', $cart_products);
+                view()->share('site_info', $site_info);
+                view()->share('site_contact_info', $site_contact_info);
+            }
         }
-        //    if(serviceCheck('Wishlist')){
-        //     if( Schema::hasTable('wishlists')){
-        //             $wishlists = null;
-        //             if(Auth::user()){
-        //                 $wishlists = Wishlist::where('user_id',Auth::user()->id)->get();
-        //             }else{
-        //                 $wishlists = Wishlist::where('ip_address',request()->ip())->get();
-        //             }
-        //             view()->share('wishlists',$wishlists);
-        //         }
-        //     }
+
     }
+//    public function boot()
+//    {
+//        $tenant = Tenant::where('domain', request()->getHost())->first();
+//
+//        if ($tenant) {
+//            Config::set('database.connections.tenant.database', $tenant->id);
+//            DB::purge('tenant');
+//            DB::reconnect('tenant');
+//        }
+//    }
 }

@@ -18,6 +18,9 @@ use App\Http\Controllers\ShopOneController;
 |
 */
 
+//Route::middleware('tenant')->group(function () {
+//    Route::get('/', [ShopOneController::class, 'index']);
+//});
 Route::get('/', [ShopOneController::class, 'index'])->name('shop_one.root_route');
 
 
